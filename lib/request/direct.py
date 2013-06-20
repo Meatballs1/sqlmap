@@ -36,6 +36,9 @@ def direct(query, content=True):
     if Backend.isDbms(DBMS.ORACLE) and query.startswith("SELECT ") and " FROM " not in query:
         query = "%s FROM DUAL" % query
 
+    if Backend.isDbms(DBMS.HSQL) and query.startswith("SELECT ") and " FROM " not in query:
+        query = "%s FROM SYSTEM_LOBS.BLOCKS" % query
+
     for sqlTitle, sqlStatements in SQL_STATEMENTS.items():
         for sqlStatement in sqlStatements:
             if query.lower().startswith(sqlStatement) and sqlTitle != "SQL SELECT statement":
@@ -46,7 +49,6 @@ def direct(query, content=True):
         query = "SELECT %s" % query
 
     logger.log(CUSTOM_LOGGING.PAYLOAD, query)
-
     output = hashDBRetrieve(query, True, True)
     start = time.time()
 
