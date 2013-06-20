@@ -6,8 +6,8 @@ See the file 'doc/COPYING' for copying permission
 """
 
 try:
-    import jpype
     from thirdparty import jaydebeapi
+    import jpype
 except ImportError, msg:
     pass
 
@@ -32,22 +32,20 @@ class Connector(GenericConnector):
 
     def connect(self):
         self.initConnection()
-
         try:
             jar = './thirdparty/hsql/hsqldb.jar'
             args='-Djava.class.path=%s' % jar
             jvm_path = jpype.getDefaultJVMPath()
             jpype.startJVM(jvm_path, args)
         except (Exception), msg: #todo fix with specific error
-            raise SqlmapConnectionException(msg[1])
+            raise SqlmapConnectionException(msg[0])
         try:
             driver = 'org.hsqldb.jdbc.JDBCDriver'
-            connection_string = 'jdbc:hsqldb:hsql://localhost/xdb'#'jdbc:hsqldb:hsql://%s/%s' % (self.hostname, 'xdb')
+            connection_string = 'jdbc:hsqldb:mem:.' #'jdbc:hsqldb:hsql://%s/%s' % (self.hostname, self.db)
             self.connector = jaydebeapi.connect(driver,
                                         connection_string,
-                                        self.user,
-                                        self.password)
-        
+                                        str(self.user),
+                                        str(self.password))
         except (Exception), msg: #todo what kind of error is this?!
             raise SqlmapConnectionException(msg[0])
 
@@ -78,8 +76,16 @@ class Connector(GenericConnector):
 
     def select(self, query):
         retVal = None
+        print query
+        upper_query = query.upper()
 
-        print str(self.cursor)
+        if query and not (upper_query.startswith("SELECT ") or upper_query.startswith("VALUES ")):
+            query = "VALUES %s" % query
+
+        if query and upper_query.startswith("SELECT ") and " FROM " not in upper_query:
+            query = "%s FROM (VALUES(0))" % query
+
+        print 
         self.cursor.execute(query)
         retVal = self.cursor.fetchall()
 

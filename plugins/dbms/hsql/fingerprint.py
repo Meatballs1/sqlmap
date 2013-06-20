@@ -37,7 +37,7 @@ class Fingerprint(GenericFingerprint):
 
             return None
 
-        # HSQL valid versions updated on 04/2011
+        # HSQL - TODO NOT UPDATED FROM MYSQL
         versions = (
                      (32200, 32235),    # HSQL 3.22
                      (32300, 32359),    # HSQL 3.23
@@ -135,7 +135,7 @@ class Fingerprint(GenericFingerprint):
         """
         References for fingerprint:
 
-        * http://dev.HSQL.com/doc/refman/5.0/en/news-5-0-x.html (up to 5.0.89)
+        
         """
 
         if not conf.extensiveFp and (Backend.isDbmsWithin(HSQL_ALIASES) \
@@ -159,7 +159,7 @@ class Fingerprint(GenericFingerprint):
         infoMsg = "testing %s" % DBMS.HSQL
         logger.info(infoMsg)
 
-        result = inject.checkBooleanExpression("ROUNDMAGIC(PI())=3")
+        result = inject.checkBooleanExpression("ROUNDMAGIC(PI())>=3")
 
         if result:
             infoMsg = "confirming %s" % DBMS.HSQL
@@ -173,82 +173,12 @@ class Fingerprint(GenericFingerprint):
 
                 return False
 
-            # reading information_schema on some platforms is causing annoying timeout exits
-            # Reference: http://bugs.HSQL.com/bug.php?id=15855
-
-            # Determine if it is HSQL >= 5.0.0
-            if inject.checkBooleanExpression("ISNULL(TIMESTAMPADD(MINUTE,[RANDNUM],0))"):
-                kb.data.has_information_schema = True
-                Backend.setVersion(">= 5.0.0")
-                setDbms("%s 5" % DBMS.HSQL)
-                self.getBanner()
-
                 if not conf.extensiveFp:
                     return True
-
-                infoMsg = "actively fingerprinting %s" % DBMS.HSQL
-                logger.info(infoMsg)
-
-                # Check if it is HSQL >= 5.5.0
-                if inject.checkBooleanExpression("TO_SECONDS(950501)>0"):
-                    Backend.setVersion(">= 5.5.0")
-
-                # Check if it is HSQL >= 5.1.2 and < 5.5.0
-                elif inject.checkBooleanExpression("@@table_open_cache=@@table_open_cache"):
-                    if inject.checkBooleanExpression("[RANDNUM]=(SELECT [RANDNUM] FROM information_schema.GLOBAL_STATUS LIMIT 0, 1)"):
-                        Backend.setVersionList([">= 5.1.12", "< 5.5.0"])
-                    elif inject.checkBooleanExpression("[RANDNUM]=(SELECT [RANDNUM] FROM information_schema.PROCESSLIST LIMIT 0, 1)"):
-                        Backend.setVersionList([">= 5.1.7", "< 5.1.12"])
-                    elif inject.checkBooleanExpression("[RANDNUM]=(SELECT [RANDNUM] FROM information_schema.PARTITIONS LIMIT 0, 1)"):
-                        Backend.setVersion("= 5.1.6")
-                    elif inject.checkBooleanExpression("[RANDNUM]=(SELECT [RANDNUM] FROM information_schema.PLUGINS LIMIT 0, 1)"):
-                        Backend.setVersionList([">= 5.1.5", "< 5.1.6"])
-                    else:
-                        Backend.setVersionList([">= 5.1.2", "< 5.1.5"])
-
-                # Check if it is HSQL >= 5.0.0 and < 5.1.2
-                elif inject.checkBooleanExpression("@@hostname=@@hostname"):
-                    Backend.setVersionList([">= 5.0.38", "< 5.1.2"])
-                elif inject.checkBooleanExpression("@@character_set_filesystem=@@character_set_filesystem"):
-                    Backend.setVersionList([">= 5.0.19", "< 5.0.38"])
-                elif not inject.checkBooleanExpression("[RANDNUM]=(SELECT [RANDNUM] FROM DUAL WHERE [RANDNUM1]!=[RANDNUM2])"):
-                    Backend.setVersionList([">= 5.0.11", "< 5.0.19"])
-                elif inject.checkBooleanExpression("@@div_precision_increment=@@div_precision_increment"):
-                    Backend.setVersionList([">= 5.0.6", "< 5.0.11"])
-                elif inject.checkBooleanExpression("@@automatic_sp_privileges=@@automatic_sp_privileges"):
-                    Backend.setVersionList([">= 5.0.3", "< 5.0.6"])
                 else:
-                    Backend.setVersionList([">= 5.0.0", "< 5.0.3"])
-
-            elif inject.checkBooleanExpression("DATABASE() LIKE SCHEMA()"):
-                Backend.setVersion(">= 5.0.2")
-                setDbms("%s 5" % DBMS.HSQL)
-                self.getBanner()
-
-            elif inject.checkBooleanExpression("STRCMP(LOWER(CURRENT_USER()), UPPER(CURRENT_USER()))=0"):
-                Backend.setVersion("< 5.0.0")
-                setDbms("%s 4" % DBMS.HSQL)
-                self.getBanner()
-
-                if not conf.extensiveFp:
-                    return True
-
-                # Check which version of HSQL < 5.0.0 it is
-                if inject.checkBooleanExpression("3=(SELECT COERCIBILITY(USER()))"):
-                    Backend.setVersionList([">= 4.1.11", "< 5.0.0"])
-                elif inject.checkBooleanExpression("2=(SELECT COERCIBILITY(USER()))"):
-                    Backend.setVersionList([">= 4.1.1", "< 4.1.11"])
-                elif inject.checkBooleanExpression("CURRENT_USER()=CURRENT_USER()"):
-                    Backend.setVersionList([">= 4.0.6", "< 4.1.1"])
-
-                    if inject.checkBooleanExpression("'utf8'=(SELECT CHARSET(CURRENT_USER()))"):
-                        Backend.setVersion("= 4.1.0")
-                    else:
-                        Backend.setVersionList([">= 4.0.6", "< 4.1.0"])
-                else:
-                    Backend.setVersionList([">= 4.0.0", "< 4.0.6"])
+                    Backend.setVersionList(["?", "?"])
             else:
-                Backend.setVersion("< 4.0.0")
+                Backend.setVersion("v?")
                 setDbms("%s 3" % DBMS.HSQL)
                 self.getBanner()
 
