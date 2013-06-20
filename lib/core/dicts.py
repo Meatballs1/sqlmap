@@ -147,6 +147,7 @@ FROM_DUMMY_TABLE = {
                         DBMS.FIREBIRD: " FROM RDB$DATABASE",
                         DBMS.MAXDB: " FROM VERSIONS",
                         DBMS.DB2: " FROM SYSIBM.SYSDUMMY1",
+                        DBMS.HSQL: " FROM (VALUES(0))"
                    }
 
 SQL_STATEMENTS = {
@@ -188,7 +189,8 @@ SQL_STATEMENTS = {
 
                         "SQL data execution":    (
                              "exec ",
-                             "execute ",         ),
+                             "execute ",
+                             "values ",          ),
 
                         "SQL transaction":       (
                              "start transaction ",

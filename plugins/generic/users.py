@@ -79,7 +79,6 @@ class Users:
         else:
             query = queries[Backend.getIdentifiedDbms()].is_dba.query
 
-        query = agent.forgeCaseStatement(query)
         kb.data.isDba = inject.checkBooleanExpression(query) or False
 
         return kb.data.isDba

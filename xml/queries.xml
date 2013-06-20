@@ -649,7 +649,7 @@
         <current_user query="CURRENT_USER"/>
         <current_db query="CURRENT_SCHEMA"/>
         <hostname query="@@HOSTNAME"/>
-        <is_dba query="(SELECT IS_GRANTABLE FROM INFORMATION_schema.ADMINISTRABLE_ROLE_AUTHORIZATIONS WHERE ROLE_NAME='DBA' AND GRANTEE=CURRENT_USER LIMIT 0,1)='YES'"/>
+        <is_dba query="(SELECT COUNT(IS_GRANTABLE) FROM INFORMATION_schema.ADMINISTRABLE_ROLE_AUTHORIZATIONS WHERE ROLE_NAME='DBA' AND GRANTEE=CURRENT_USER)=1"/>
         <check_udf query="(SELECT name FROM mysql.func WHERE name='%s' LIMIT 0,1)='%s'"/>
         <users>
             <inband query="SELECT grantee FROM INFORMATION_SCHEMA.USER_PRIVILEGES" query2="SELECT user FROM mysql.user"/>
