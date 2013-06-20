@@ -76,7 +76,7 @@ class Connector(GenericConnector):
 
     def select(self, query):
         retVal = None
-        print query
+
         upper_query = query.upper()
 
         if query and not (upper_query.startswith("SELECT ") or upper_query.startswith("VALUES ")):
@@ -85,7 +85,6 @@ class Connector(GenericConnector):
         if query and upper_query.startswith("SELECT ") and " FROM " not in upper_query:
             query = "%s FROM (VALUES(0))" % query
 
-        print 
         self.cursor.execute(query)
         retVal = self.cursor.fetchall()
 

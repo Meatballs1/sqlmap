@@ -73,7 +73,10 @@ class Connector(GenericConnector):
 
     def select(self, query):
         retVal = None
-
+        
+        if query.startswith("SELECT ") and " FROM " not in query:
+            query = "%s FROM DUAL" % query
+            
         if self.execute(query):
             retVal = self.fetchall()
 

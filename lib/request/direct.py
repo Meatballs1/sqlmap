@@ -33,9 +33,6 @@ def direct(query, content=True):
     query = agent.adjustLateValues(query)
     threadData = getCurrentThreadData()
 
-    if Backend.isDbms(DBMS.ORACLE) and query.startswith("SELECT ") and " FROM " not in query:
-        query = "%s FROM DUAL" % query
-
     for sqlTitle, sqlStatements in SQL_STATEMENTS.items():
         for sqlStatement in sqlStatements:
             if query.lower().startswith(sqlStatement) and sqlTitle != "SQL SELECT statement":
