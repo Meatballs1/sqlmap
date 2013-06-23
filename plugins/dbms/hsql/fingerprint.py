@@ -134,8 +134,16 @@ class Fingerprint(GenericFingerprint):
     def checkDbms(self):
         """
         References for fingerprint:
-
-        
+        DATABASE_VERSION()
+        version 2.2.6 added two-arg REPLACE functio REPLACE('a','a') compared to REPLACE('a','a','d')
+        version 2.2.5 added SYSTIMESTAMP function
+        version 2.2.3 added REGEXPR_SUBSTRING and REGEXPR_SUBSTRING_ARRAY functions
+        version 2.2.0 added support for ROWNUM() function
+        version 2.1.0 added MEDIAN aggregate function
+        version < 2.0.1 added support for datetime ROUND and TRUNC functions
+        version 1.8.0.4 Added org.hsqldb.Library function, getDatabaseFullProductVersion to return the
+                        full version string, including the 4th digit (e.g 1.8.0.4).
+         
         """
 
         if not conf.extensiveFp and (Backend.isDbmsWithin(HSQL_ALIASES) \
