@@ -2747,7 +2747,7 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-			<dbms_version>&gt; 2.0</dbms_version>
+            <dbms_version>&gt; 2.0</dbms_version>
         </details>
     </test>
 
@@ -2768,7 +2768,7 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-			<dbms_version>&gt; 2.0</dbms_version>
+            <dbms_version>&gt; 2.0</dbms_version>
         </details>
     </test>
     <!-- TODO: if possible, add payload for Microsoft Access -->
@@ -3028,7 +3028,7 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-			<dbms_version>&gt; 2.0</dbms_version>
+            <dbms_version>&gt; 2.0</dbms_version>
         </details>
     </test>
     <!-- TODO: if possible, add payload for Microsoft Access -->
@@ -3491,7 +3491,7 @@ Formats:
     </test>
 	
 	<test>
-        <title>HSQL time-based blind - GROUP BY and ORDER BY clauses (heavy query)</title>
+        <title>HSQL &gt; 2.0 time-based blind - GROUP BY and ORDER BY clauses (heavy query)</title>
         <stype>5</stype>
         <level>4</level>
         <risk>2</risk>
@@ -3506,7 +3506,7 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-			<dbms_version>&gt; 2.0</dbms_version>
+            <dbms_version>&gt; 2.0</dbms_version>
         </details>
     </test>
     <!-- TODO: if possible, add payload for Microsoft Access -->
