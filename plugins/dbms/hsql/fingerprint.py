@@ -10,6 +10,7 @@ import re
 from lib.core.common import Backend
 from lib.core.common import Format
 from lib.core.common import getUnicode
+from lib.core.common import unArrayizeValue
 from lib.core.data import conf
 from lib.core.data import kb
 from lib.core.data import logger
@@ -24,68 +25,6 @@ from plugins.generic.fingerprint import Fingerprint as GenericFingerprint
 class Fingerprint(GenericFingerprint):
     def __init__(self):
         GenericFingerprint.__init__(self, DBMS.HSQL)
-
-    def _commentCheck(self):
-        infoMsg = "executing %s comment injection fingerprint" % DBMS.HSQL
-        logger.info(infoMsg)
-
-        result = inject.checkBooleanExpression("[RANDNUM]=[RANDNUM]/* NoValue */")
-
-        if not result:
-            warnMsg = "unable to perform %s comment injection" % DBMS.HSQL
-            logger.warn(warnMsg)
-
-            return None
-
-        # HSQL - TODO NOT UPDATED FROM MYSQL
-        versions = (
-                     (32200, 32235),    # HSQL 3.22
-                     (32300, 32359),    # HSQL 3.23
-                     (40000, 40032),    # HSQL 4.0
-                     (40100, 40131),    # HSQL 4.1
-                     (50000, 50092),    # HSQL 5.0
-                     (50100, 50156),    # HSQL 5.1
-                     (50400, 50404),    # HSQL 5.4
-                     (50500, 50521),    # HSQL 5.5
-                     (50600, 50604),    # HSQL 5.6
-                     (60000, 60014),    # HSQL 6.0
-                   )
-
-        index = -1
-        for i in xrange(len(versions)):
-            element = versions[i]
-            version = element[0]
-            version = getUnicode(version)
-            result = inject.checkBooleanExpression("[RANDNUM]=[RANDNUM]/*!%s AND [RANDNUM1]=[RANDNUM2]*/" % version)
-
-            if result:
-                break
-            else:
-                index += 1
-
-        if index >= 0:
-            prevVer = None
-
-            for version in xrange(versions[index][0], versions[index][1] + 1):
-                version = getUnicode(version)
-                result = inject.checkBooleanExpression("[RANDNUM]=[RANDNUM]/*!%s AND [RANDNUM1]=[RANDNUM2]*/" % version)
-
-                if result:
-                    if not prevVer:
-                        prevVer = version
-
-                    if version[0] == "3":
-                        midVer = prevVer[1:3]
-                    else:
-                        midVer = prevVer[2]
-
-                    trueVer = "%s.%s.%s" % (prevVer[0], midVer, prevVer[3:])
-
-                    return trueVer
-
-                prevVer = version
-
-        return None
 
     def getFingerprint(self):
         value = ""
@@ -107,13 +46,8 @@ class Fingerprint(GenericFingerprint):
             value += actVer
             return value
 
-        comVer = self._commentCheck()
         blank = " " * 15
         value += "active fingerprint: %s" % actVer
-
-        if comVer:
-            comVer = Format.getDbms([comVer])
-            value += "\n%scomment injection fingerprint: %s" % (blank, comVer)
 
         if kb.bannerFp:
             banVer = kb.bannerFp["dbmsVersion"] if 'dbmsVersion' in kb.bannerFp else None
@@ -141,8 +75,10 @@ class Fingerprint(GenericFingerprint):
         version 2.2.0 added support for ROWNUM() function
         version 2.1.0 added MEDIAN aggregate function
         version < 2.0.1 added support for datetime ROUND and TRUNC functions
+        version 2.0.0 added VALUES support
         version 1.8.0.4 Added org.hsqldb.Library function, getDatabaseFullProductVersion to return the
                         full version string, including the 4th digit (e.g 1.8.0.4).
+        version 1.7.2 CASE statements added and INFORMATION_SCHEMA
          
         """
 
@@ -157,7 +93,7 @@ class Fingerprint(GenericFingerprint):
 
             setDbms("%s %s" % (DBMS.HSQL, Backend.getVersion()))
 
-            if Backend.isVersionGreaterOrEqualThan("5"):
+            if Backend.isVersionGreaterOrEqualThan("1.7.2"):
                 kb.data.has_information_schema = True
 
             self.getBanner()
@@ -167,54 +103,43 @@ class Fingerprint(GenericFingerprint):
         infoMsg = "testing %s" % DBMS.HSQL
         logger.info(infoMsg)
 
-        result = inject.checkBooleanExpression("ROUNDMAGIC(PI())>=3")
+        result = inject.checkBooleanExpression("\"java.lang.Math.sqrt\"(1)=1")
 
         if result:
             infoMsg = "confirming %s" % DBMS.HSQL
             logger.info(infoMsg)
 
-            result = inject.checkBooleanExpression("USER() LIKE USER()")
+            result = inject.checkBooleanExpression("ROUNDMAGIC(PI())>=3")
 
             if not result:
                 warnMsg = "the back-end DBMS is not %s" % DBMS.HSQL
                 logger.warn(warnMsg)
 
                 return False
+            else:
+                kb.data.has_information_schema = True
+                Backend.setVersion(">= 1.7.2")
+                setDbms("%s 1.7.2" % DBMS.HSQL)
 
                 if not conf.extensiveFp:
                     return True
+
+                banner = self.getBanner()
+                if banner:
+                    Backend.setVersion("= %s" % banner)
                 else:
-                    Backend.setVersionList(["?", "?"])
-            else:
-                Backend.setVersion("v?")
-                setDbms("%s 3" % DBMS.HSQL)
-                self.getBanner()
+                    if inject.checkBooleanExpression("(SELECT [RANDNUM] FROM (VALUES(0)))=[RANDNUM]"):
+                        Backend.setVersionList([">= 2.0.0", "< 3.0"])
+                    else:
+                        banner = unArrayizeValue(inject.getValue("\"org.hsqldb.Library.getDatabaseFullProductVersion\"()", safeCharEncode=True))
+                        if banner:
+                            Backend.setVersion("= %s" % banner)
+                        else:
+                            Backend.setVersionList([">= 1.7.2", "< 1.8.0"])
 
             return True
         else:
-            warnMsg = "the back-end DBMS is not %s" % DBMS.HSQL
+            warnMsg = "the back-end DBMS is not %s or is < 1.7.2" % DBMS.HSQL
             logger.warn(warnMsg)
 
             return False
-
-    def checkDbmsOs(self, detailed=False):
-        if Backend.getOs():
-            return
-
-        infoMsg = "fingerprinting the back-end DBMS operating system"
-        logger.info(infoMsg)
-
-        result = inject.checkBooleanExpression("'W'=UPPER(MID(@@version_compile_os,1,1))")
-
-        if result:
-            Backend.setOs(OS.WINDOWS)
-        elif not result:
-            Backend.setOs(OS.LINUX)
-
-        if Backend.getOs():
-            infoMsg = "the back-end DBMS operating system is %s" % Backend.getOs()
-            logger.info(infoMsg)
-        else:
-            self.userChooseDbmsOs()
-
-        self.cleanup(onlyFileTbl=True)

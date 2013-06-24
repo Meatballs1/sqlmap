@@ -2753,7 +2753,7 @@ Formats:
     </test>
 	
     <test>
-        <title>HSQL &gt; 1.7.2 AND time-based blind (heavy query)</title>
+        <title>HSQL &gt;= 1.7.2 AND time-based blind (heavy query)</title>
         <stype>5</stype>
         <level>2</level>
         <risk>2</risk>
@@ -2768,12 +2768,12 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-            <dbms_version>&gt; 1.7.2</dbms_version>
+            <dbms_version>&gt;= 1.7.2</dbms_version>
         </details>
     </test>
 
     <test>
-        <title>HSQL &gt; 1.7.2 AND time-based blind (heavy query - comment)</title>
+        <title>HSQL &gt;= 1.7.2 AND time-based blind (heavy query - comment)</title>
         <stype>5</stype>
         <level>5</level>
         <risk>2</risk>
@@ -2789,7 +2789,7 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-            <dbms_version>&gt; 1.7.2</dbms_version>
+            <dbms_version>&gt;= 1.7.2</dbms_version>
         </details>
     </test>
 	
@@ -3054,7 +3054,7 @@ Formats:
     </test>
 	
     <test>
-        <title>HSQL &gt; 1.7.2 OR time-based blind (heavy query)</title>
+        <title>HSQL &gt;= 1.7.2 OR time-based blind (heavy query)</title>
         <stype>5</stype>
         <level>2</level>
         <risk>2</risk>
@@ -3069,12 +3069,12 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-			<dbms_version>&gt; 1.7.2</dbms_version>
+			<dbms_version>&gt;= 1.7.2</dbms_version>
         </details>
     </test>
 
     <test>
-        <title>HSQL &gt; 1.7.2 OR time-based blind (heavy query - comment)</title>
+        <title>HSQL &gt;= 1.7.2 OR time-based blind (heavy query - comment)</title>
         <stype>5</stype>
         <level>5</level>
         <risk>2</risk>
@@ -3090,7 +3090,7 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-            <dbms_version>&gt; 1.7.2</dbms_version>
+            <dbms_version>&gt;= 1.7.2</dbms_version>
         </details>
     </test>	
 	
@@ -3434,7 +3434,7 @@ Formats:
 	
 	<!-- Untested -->
     <test>
-        <title>HSQL &gt; 1.7.2 time-based blind - Parameter replace (heavy query)</title>
+        <title>HSQL &gt;= 1.7.2 time-based blind - Parameter replace (heavy query)</title>
         <stype>5</stype>
         <level>2</level>
         <risk>2</risk>
@@ -3449,7 +3449,7 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-			<dbms_version>&gt; 1.7.2</dbms_version>
+			<dbms_version>&gt;= 1.7.2</dbms_version>
         </details>
     </test>
 	
@@ -3635,7 +3635,7 @@ Formats:
     </test>
 
 	<test>
-        <title>HSQL &gt; 1.7.2 time-based blind - GROUP BY and ORDER BY clauses (heavy query)</title>
+        <title>HSQL &gt;= 1.7.2 time-based blind - GROUP BY and ORDER BY clauses (heavy query)</title>
         <stype>5</stype>
         <level>4</level>
         <risk>2</risk>
@@ -3651,7 +3651,7 @@ Formats:
         </response>
         <details>
             <dbms>HSQL</dbms>
-            <dbms_version>&gt; 1.7.2</dbms_version>
+            <dbms_version>&gt;= 1.7.2</dbms_version>
         </details>
     </test>	
 	

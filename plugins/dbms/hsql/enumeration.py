@@ -30,18 +30,17 @@ class Enumeration(GenericEnumeration):
             query = queries[Backend.getIdentifiedDbms()].banner.query
             kb.data.banner = unArrayizeValue(inject.getValue(query, safeCharEncode=True))
 
-            bannerParser(kb.data.banner)
-
-            if conf.os and conf.os == "windows":
-                kb.bannerFp["type"] = set(["Windows"])
-
-            elif conf.os and conf.os == "linux":
-                kb.bannerFp["type"] = set(["Linux"])
-
-            elif conf.os:
-                kb.bannerFp["type"] = set(["%s%s" % (conf.os[0].upper(), conf.os[1:])])
-
-            if conf.os:
-                setOs()
-
         return kb.data.banner
+
+    def getBanner_1_8(self):
+        if not conf.getBanner:
+            return
+
+        if kb.data.banner is None:
+            infoMsg = "fetching banner"
+            logger.info(infoMsg)
+
+            query = queries[Backend.getIdentifiedDbms()].banner.query2
+            kb.data.banner = unArrayizeValue(inject.getValue(query, safeCharEncode=True))
+
+        return kb.data.banner        
